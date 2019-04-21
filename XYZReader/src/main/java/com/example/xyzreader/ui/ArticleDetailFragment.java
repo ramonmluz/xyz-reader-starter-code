@@ -56,9 +56,6 @@ public class ArticleDetailFragment extends Fragment implements
     @BindView(R.id.draw_insets_frame_layout)
     DrawInsetsFrameLayout mDrawInsetsFrameLayout;
 
-    private ColorDrawable mStatusBarColorDrawable;
-
-    private int mTopInset;
 
     @BindView(R.id.photo_container)
     View mPhotoContainerView;
@@ -68,16 +65,18 @@ public class ArticleDetailFragment extends Fragment implements
 
     @BindView(R.id.article_title)
     TextView titleView;
+
     @BindView(R.id.article_byline)
     TextView bylineView;
 
     @BindView(R.id.article_body)
     TextView bodyView;
 
+    private ColorDrawable mStatusBarColorDrawable;
+    private int mTopInset;
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
-
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -147,7 +146,6 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-//        bindViews();
         updateStatusBar();
         return mRootView;
     }

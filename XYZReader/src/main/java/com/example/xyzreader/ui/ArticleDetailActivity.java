@@ -20,6 +20,9 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.example.xyzreader.ui.ArticleDetailFragment.ARG_ITEM_ID;
 
 /**
@@ -27,6 +30,12 @@ import static com.example.xyzreader.ui.ArticleDetailFragment.ARG_ITEM_ID;
  */
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    @BindView(R.id.up_container)
+    protected View mUpButtonContainer;
+
+    @BindView(R.id.action_up)
+    protected View mUpButton;
 
     private Cursor mCursor;
     private long mStartId;
@@ -37,48 +46,23 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
-    private View mUpButtonContainer;
-    private View mUpButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
+
         setContentView(R.layout.activity_article_detail);
 
-        mPagerAdapter = new MyPagerAdapter(getFragmentManager());
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setPageMargin((int) TypedValue
-                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
-        mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
+        ButterKnife.bind(this);
 
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-                mUpButton.animate()
-                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
-                        .setDuration(300);
-            }
+        getLoaderManager().initLoader(0, null, this);
 
-            @Override
-            public void onPageSelected(int position) {
-                if (mCursor != null) {
-                    mCursor.moveToPosition(position);
-                }
-                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-                updateUpButtonPosition();
-            }
-        });
+        initViewPager();
 
-        mUpButtonContainer = findViewById(R.id.up_container);
-
-        mUpButton = findViewById(R.id.action_up);
         mUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,13 +91,31 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
     }
 
-    protected void onResume() {
-        super.onResume();
-        if (getLoaderManager().getLoader(ArticleLoader.Query._ID) == null) {
-            getLoaderManager().initLoader(ArticleLoader.Query._ID, null, this);
-        } else {
-            getLoaderManager().restartLoader(ArticleLoader.Query._ID, null, this);
-        }
+    private void initViewPager() {
+        mPagerAdapter = new MyPagerAdapter(getFragmentManager());
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager.setAdapter(mPagerAdapter);
+        mPager.setPageMargin((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+        mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
+
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                mUpButton.animate()
+                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
+                        .setDuration(300);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (mCursor != null) {
+                    mCursor.moveToPosition(position);
+                }
+                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+                updateUpButtonPosition();
+            }
+        });
     }
 
     @Override
@@ -158,11 +160,6 @@ public class ArticleDetailActivity extends AppCompatActivity
     private void updateUpButtonPosition() {
         int upButtonNormalBottom = mTopInset + mUpButton.getHeight();
         mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {

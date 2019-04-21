@@ -64,10 +64,6 @@ public class ArticleListActivity extends AppCompatActivity implements
         initBroadcastReceiver();
 
         getLoaderManager().initLoader(0, null, this);
-
-//        if (savedInstanceState == null) {
-//            onRefresh();
-//        }
     }
 
     private void initRecyclerView() {
