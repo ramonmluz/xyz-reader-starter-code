@@ -40,7 +40,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         mCursor = cursor;
         mContext = context;
     }
-    public ArticleAdapter(){
+
+    public ArticleAdapter() {
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,7 +53,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             super(view);
             thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
             titleView = (TextView) view.findViewById(R.id.article_title);
-//            subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
         }
     }
 
@@ -62,6 +62,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         return mCursor.getLong(ArticleLoader.Query._ID);
     }
 
+    public long getPosition() {
+        return mCursor != null ? mCursor.getPosition() : 0;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -69,29 +73,13 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
         final ViewHolder vh = new ViewHolder(view);
 
-       return vh;
+        return vh;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         mCursor.moveToPosition(position);
         holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-//        Date publishedDate = parsePublishedDate();
-//        if (!publishedDate.before(START_OF_EPOCH.getTime())) {
-//
-//            holder.subtitleView.setText(Html.fromHtml(
-//                    DateUtils.getRelativeTimeSpanString(
-//                            publishedDate.getTime(),
-//                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-//                            DateUtils.FORMAT_ABBREV_ALL).toString()
-//                            + "<br/>" + " by "
-//                            + mCursor.getString(ArticleLoader.Query.AUTHOR)));
-//        } else {
-//            holder.subtitleView.setText(Html.fromHtml(
-//                    outputFormat.format(publishedDate)
-//                            + "<br/>" + " by "
-//                            + mCursor.getString(ArticleLoader.Query.AUTHOR)));
-//        }
 
         holder.thumbnailView.setImageUrl(
                 mCursor.getString(ArticleLoader.Query.THUMB_URL),
@@ -108,19 +96,12 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         });
     }
 
-//    private Date parsePublishedDate() {
-//        try {
-//            String date = mCursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
-//            return dateFormat.parse(date);
-//        } catch (ParseException ex) {
-//            Log.e(TAG, ex.getMessage());
-//            Log.i(TAG, "passing today's date");
-//            return new Date();
-//        }
-//    }
-
     @Override
     public int getItemCount() {
         return mCursor.getCount();
+    }
+
+    public Cursor getmCursor() {
+        return mCursor;
     }
 }
